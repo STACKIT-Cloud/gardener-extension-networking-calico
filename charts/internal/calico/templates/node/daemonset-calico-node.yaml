@@ -169,9 +169,11 @@ spec:
             {{- end }}
             - name: IP
               value: "autodetect"
+            - name: IP6
+              value: "autodetect"
             # Disable IPV6 on Kubernetes.
             - name: FELIX_IPV6SUPPORT
-              value: "false"
+              value: "true"
             {{- if semverCompare ">= 1.16" .Capabilities.KubeVersion.GitVersion  }}
             # Enable or Disable VXLAN on the default IP pool.
             - name: CALICO_IPV4POOL_VXLAN
@@ -205,6 +207,8 @@ spec:
             # no effect. This should fall within `--cluster-cidr`.
             - name: CALICO_IPV4POOL_CIDR
               value: "{{ .Values.global.podCIDR }}"
+            - name: CALICO_IPV6POOL_CIDR
+              value: "fd02:0800::0:0/112"
             - name: FELIX_IPINIPENABLED
               value: "{{ .Values.config.felix.ipinip.enabled }}"
             - name: "CALICO_IPV4POOL_{{ .Values.config.ipv4.pool | upper }}"

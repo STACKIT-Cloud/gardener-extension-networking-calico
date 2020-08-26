@@ -42,12 +42,16 @@ data:
             "type": "calico-ipam"
         {{- else }}
             "type": "{{ .Values.config.ipam.type }}",
-            "subnet": "{{ .Values.config.ipam.subnet }}"
+            "subnet": "{{ .Values.config.ipam.subnet }}",
+            "assign_ipv4": "true",
+            "assign_ipv6": "true"
         {{- end }}
           },
         {{- else }}
           "ipam": {
             "type": "{{ .Values.config.ipam.type }}",
+            "assign_ipv4": "true",
+            "assign_ipv6": "true"
           },
         {{- end }}
           "policy": {
