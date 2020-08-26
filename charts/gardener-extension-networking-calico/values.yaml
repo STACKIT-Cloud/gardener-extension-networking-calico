@@ -1,5 +1,5 @@
 image:
-  repository: eu.gcr.io/gardener-project/gardener/extensions/networking-calico
+  repository: einfachnuralex/gardener-extension-networking-calico
   tag: latest
   pullPolicy: IfNotPresent
 
