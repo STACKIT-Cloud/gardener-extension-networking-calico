@@ -1,5 +1,5 @@
 image:
-  repository: einfachnuralex/gardener-extension-networking-calico
+  repository: einfachnuralex/networking-calico
   tag: latest
   pullPolicy: IfNotPresent
 
