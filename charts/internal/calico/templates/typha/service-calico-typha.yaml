@@ -10,6 +10,7 @@ metadata:
   labels:
     k8s-app: calico-typha
 spec:
+  ipFamily: IPv6
   ports:
     - port: 5473
       protocol: TCP

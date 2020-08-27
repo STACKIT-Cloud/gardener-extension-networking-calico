@@ -208,7 +208,7 @@ spec:
             - name: CALICO_IPV4POOL_CIDR
               value: "{{ (split "," .Values.global.podCIDR)._0 }}"
             - name: CALICO_IPV6POOL_CIDR
-              value: "{{ (split "," .Values.global.podCIDR)._11 }}"
+              value: "{{ (split "," .Values.global.podCIDR)._1 }}"
             - name: FELIX_IPINIPENABLED
               value: "{{ .Values.config.felix.ipinip.enabled }}"
             - name: "CALICO_IPV4POOL_{{ .Values.config.ipv4.pool | upper }}"
