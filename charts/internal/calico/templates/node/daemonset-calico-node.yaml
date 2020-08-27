@@ -206,9 +206,9 @@ spec:
             # chosen from this range. Changing this value after installation will have
             # no effect. This should fall within `--cluster-cidr`.
             - name: CALICO_IPV4POOL_CIDR
-              value: "{{ .Values.global.podCIDR }}"
+              value: "{{ (split "," .Values.global.podCIDR)._0 }}"
             - name: CALICO_IPV6POOL_CIDR
-              value: "fd02:0800::0:0/112"
+              value: "{{ (split "," .Values.global.podCIDR)._11 }}"
             - name: FELIX_IPINIPENABLED
               value: "{{ .Values.config.felix.ipinip.enabled }}"
             - name: "CALICO_IPV4POOL_{{ .Values.config.ipv4.pool | upper }}"
