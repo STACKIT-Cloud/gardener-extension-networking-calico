@@ -1,5 +1,5 @@
 image:
-  repository: einfachnuralex/networking-calico
+  repository: registry.alpha.ske.eu01.stackit.cloud/gardener-ds/networking-calico
   tag: latest
   pullPolicy: IfNotPresent
 
