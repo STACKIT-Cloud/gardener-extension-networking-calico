@@ -169,8 +169,10 @@ spec:
             {{- end }}
             - name: IP
               value: "autodetect"
+            {{ if gt (len (split "," .Values.global.podCIDR)) 1 }}
             - name: IP6
               value: "autodetect"
+            {{- end }}
             # Disable IPV6 on Kubernetes.
             - name: FELIX_IPV6SUPPORT
               value: "true"
@@ -207,8 +209,10 @@ spec:
             # no effect. This should fall within `--cluster-cidr`.
             - name: CALICO_IPV4POOL_CIDR
               value: "{{ (split "," .Values.global.podCIDR)._0 }}"
+            {{ if gt (len (split "," .Values.global.podCIDR)) 1 }}
             - name: CALICO_IPV6POOL_CIDR
               value: "{{ (split "," .Values.global.podCIDR)._1 }}"
+            {{- end }}
             - name: FELIX_IPINIPENABLED
               value: "{{ .Values.config.felix.ipinip.enabled }}"
             - name: "CALICO_IPV4POOL_{{ .Values.config.ipv4.pool | upper }}"
@@ -241,22 +245,22 @@ spec:
           livenessProbe:
             exec:
               command:
-              - /bin/calico-node
-              - -felix-live
-              {{- if eq .Values.config.backend "bird" }}
-              - -bird-live
-              {{- end }}
+                - /bin/calico-node
+                - -felix-live
+                {{- if eq .Values.config.backend "bird" }}
+                - -bird-live
+            {{- end }}
             periodSeconds: 10
             initialDelaySeconds: 10
             failureThreshold: 6
           readinessProbe:
             exec:
               command:
-              - /bin/calico-node
-              - -felix-ready
-              {{- if eq .Values.config.backend "bird" }}
-              - -bird-ready
-              {{- end }}
+                - /bin/calico-node
+                - -felix-ready
+                {{- if eq .Values.config.backend "bird" }}
+                - -bird-ready
+            {{- end }}
             periodSeconds: 10
           volumeMounts:
             - mountPath: /lib/modules
