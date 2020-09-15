@@ -52,49 +52,49 @@ spec:
       # deletion": https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods.
       terminationGracePeriodSeconds: 0
       initContainers:
-      # This container installs the Calico CNI binaries
-      # and CNI network config file on each node.
-      - name: install-cni
-        image: {{ index .Values.images "calico-cni" }}
-        command: ["/install-cni.sh"]
-        env:
-          # Name of the CNI config file to create.
-          - name: CNI_CONF_NAME
-            value: "10-calico.conflist"
-          # The CNI network config to install on each node.
-          - name: CNI_NETWORK_CONFIG
-            valueFrom:
-              configMapKeyRef:
-                name: calico-config
-                key: cni_network_config
-          # Set the hostname based on the k8s node name.
-          - name: KUBERNETES_NODE_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: spec.nodeName
-          # CNI MTU Config variable
-          - name: CNI_MTU
-            valueFrom:
-              configMapKeyRef:
-                name: calico-config
-                key: veth_mtu
-          # Prevents the container from sleeping forever.
-          - name: SLEEP
-            value: "false"
-        volumeMounts:
-          - mountPath: /host/opt/cni/bin
-            name: cni-bin-dir
-          - mountPath: /host/etc/cni/net.d
-            name: cni-net-dir
-        # Adds a Flex Volume Driver that creates a per-pod Unix Domain Socket to allow Dikastes
-        # to communicate with Felix over the Policy Sync API.
-      - name: flexvol-driver
-        image: {{ index .Values.images "calico-podtodaemon-flex" }}
-        volumeMounts:
-          - name: flexvol-driver-host
-            mountPath: /host/driver
-        securityContext:
-          privileged: true
+        # This container installs the Calico CNI binaries
+        # and CNI network config file on each node.
+        - name: install-cni
+          image: {{ index .Values.images "calico-cni" }}
+          command: ["/install-cni.sh"]
+          env:
+            # Name of the CNI config file to create.
+            - name: CNI_CONF_NAME
+              value: "10-calico.conflist"
+            # The CNI network config to install on each node.
+            - name: CNI_NETWORK_CONFIG
+              valueFrom:
+                configMapKeyRef:
+                  name: calico-config
+                  key: cni_network_config
+            # Set the hostname based on the k8s node name.
+            - name: KUBERNETES_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            # CNI MTU Config variable
+            - name: CNI_MTU
+              valueFrom:
+                configMapKeyRef:
+                  name: calico-config
+                  key: veth_mtu
+            # Prevents the container from sleeping forever.
+            - name: SLEEP
+              value: "false"
+          volumeMounts:
+            - mountPath: /host/opt/cni/bin
+              name: cni-bin-dir
+            - mountPath: /host/etc/cni/net.d
+              name: cni-net-dir
+          # Adds a Flex Volume Driver that creates a per-pod Unix Domain Socket to allow Dikastes
+          # to communicate with Felix over the Policy Sync API.
+        - name: flexvol-driver
+          image: {{ index .Values.images "calico-podtodaemon-flex" }}
+          volumeMounts:
+            - name: flexvol-driver-host
+              mountPath: /host/driver
+          securityContext:
+            privileged: true
       containers:
         # Runs calico/node container on each Kubernetes node.  This
         # container programs network policy and routes on each
@@ -135,8 +135,10 @@ spec:
             {{- end }}
             - name: IP
               value: "autodetect"
+            {{ if gt (len (split "," .Values.global.podCIDR)) 1 }}
             - name: IP6
               value: "autodetect"
+            {{- end }}
             # Disable IPV6 on Kubernetes.
             - name: FELIX_IPV6SUPPORT
               value: "true"
@@ -154,8 +156,10 @@ spec:
             # no effect. This should fall within `--cluster-cidr`.
             - name: CALICO_IPV4POOL_CIDR
               value: "{{ (split "," .Values.global.podCIDR)._0 }}"
+            {{ if gt (len (split "," .Values.global.podCIDR)) 1 }}
             - name: CALICO_IPV6POOL_CIDR
               value: "{{ (split "," .Values.global.podCIDR)._1 }}"
+            {{- end }}
             - name: FELIX_IPINIPENABLED
               value: "{{ .Values.config.felix.ipinip.enabled }}"
             - name: "CALICO_IPV4POOL_{{ .Values.config.ipv4.pool | upper }}"
@@ -188,22 +192,22 @@ spec:
           livenessProbe:
             exec:
               command:
-              - /bin/calico-node
-              - -felix-live
-              {{- if eq .Values.config.backend "bird" }}
-              - -bird-live
-              {{- end }}
+                - /bin/calico-node
+                - -felix-live
+                {{- if eq .Values.config.backend "bird" }}
+                - -bird-live
+            {{- end }}
             periodSeconds: 10
             initialDelaySeconds: 10
             failureThreshold: 6
           readinessProbe:
             exec:
               command:
-              - /bin/calico-node
-              - -felix-ready
-              {{- if eq .Values.config.backend "bird" }}
-              - -bird-ready
-              {{- end }}
+                - /bin/calico-node
+                - -felix-ready
+                {{- if eq .Values.config.backend "bird" }}
+                - -bird-ready
+            {{- end }}
             periodSeconds: 10
           volumeMounts:
             - mountPath: /lib/modules
