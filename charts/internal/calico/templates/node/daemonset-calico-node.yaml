@@ -172,10 +172,10 @@ spec:
             {{ if gt (len (split "," .Values.global.podCIDR)) 1 }}
             - name: IP6
               value: "autodetect"
-            {{- end }}
             # Disable IPV6 on Kubernetes.
             - name: FELIX_IPV6SUPPORT
               value: "true"
+            {{- end }}
             {{- if semverCompare ">= 1.16" .Capabilities.KubeVersion.GitVersion  }}
             # Enable or Disable VXLAN on the default IP pool.
             - name: CALICO_IPV4POOL_VXLAN
@@ -245,22 +245,22 @@ spec:
           livenessProbe:
             exec:
               command:
-                - /bin/calico-node
-                - -felix-live
-                {{- if eq .Values.config.backend "bird" }}
-                - -bird-live
-            {{- end }}
+              - /bin/calico-node
+              - -felix-live
+              {{- if eq .Values.config.backend "bird" }}
+              - -bird-live
+              {{- end }}
             periodSeconds: 10
             initialDelaySeconds: 10
             failureThreshold: 6
           readinessProbe:
             exec:
               command:
-                - /bin/calico-node
-                - -felix-ready
-                {{- if eq .Values.config.backend "bird" }}
-                - -bird-ready
-            {{- end }}
+              - /bin/calico-node
+              - -felix-ready
+              {{- if eq .Values.config.backend "bird" }}
+              - -bird-ready
+              {{- end }}
             periodSeconds: 10
           volumeMounts:
             - mountPath: /lib/modules
