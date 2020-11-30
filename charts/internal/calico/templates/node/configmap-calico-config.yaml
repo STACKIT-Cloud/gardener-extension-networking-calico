@@ -40,6 +40,9 @@ data:
           "ipam": {
         {{- if semverCompare ">= 1.16" .Capabilities.KubeVersion.GitVersion }}
             "type": "calico-ipam"
+            "subnet": "{{ .Values.config.ipam.subnet }}"{{ if gt (len (split "," .Values.global.podCIDR)) 1 }},
+            "assign_ipv4": "true",
+            "assign_ipv6": "true"
         {{- else }}
             "type": "{{ .Values.config.ipam.type }}",
             "subnet": "{{ .Values.config.ipam.subnet }}"{{ if gt (len (split "," .Values.global.podCIDR)) 1 }},
@@ -50,8 +53,7 @@ data:
           },
         {{- else }}
           "ipam": {
-            "type": "{{ .Values.config.ipam.type }}",
-            {{ if gt (len (split "," .Values.global.podCIDR)) 1 }}
+            "type": "{{ .Values.config.ipam.type }}"{{ if gt (len (split "," .Values.global.podCIDR)) 1 }},
             "assign_ipv4": "true",
             "assign_ipv6": "true"
             {{- end }}
