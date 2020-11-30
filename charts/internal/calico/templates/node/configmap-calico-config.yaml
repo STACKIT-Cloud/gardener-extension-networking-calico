@@ -39,7 +39,7 @@ data:
         {{- if .Values.config.ipam.subnet }}
           "ipam": {
         {{- if semverCompare ">= 1.16" .Capabilities.KubeVersion.GitVersion }}
-            "type": "calico-ipam"
+            "type": "calico-ipam",
             "subnet": "{{ .Values.config.ipam.subnet }}"{{ if gt (len (split "," .Values.global.podCIDR)) 1 }},
             "assign_ipv4": "true",
             "assign_ipv6": "true"
