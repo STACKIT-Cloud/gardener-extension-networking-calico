@@ -237,10 +237,10 @@ spec:
             privileged: true
           resources:
             requests:
-              cpu: 250m
+              cpu: 500m
               memory: 100Mi
             limits:
-              cpu: 800m
+              cpu: 1600m
               memory: 700Mi
           livenessProbe:
             exec:
