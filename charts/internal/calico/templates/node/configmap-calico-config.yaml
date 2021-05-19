@@ -39,11 +39,17 @@ data:
         {{- if .Values.config.ipam.subnet }}
           "ipam": {
             "type": "{{ .Values.config.ipam.type }}",
-            "subnet": "{{ .Values.config.ipam.subnet }}"
+            "subnet": "{{ .Values.config.ipam.subnet }}"{{ if gt (len (split "," .Values.global.podCIDR)) 1 }},
+            "assign_ipv4": "true",
+            "assign_ipv6": "true"
+            {{- end }}
           },
         {{- else }}
           "ipam": {
-            "type": "{{ .Values.config.ipam.type }}",
+            "type": "{{ .Values.config.ipam.type }}"{{ if gt (len (split "," .Values.global.podCIDR)) 1 }},
+            "assign_ipv4": "true",
+            "assign_ipv6": "true"
+            {{- end }}
           },
         {{- end }}
           "policy": {

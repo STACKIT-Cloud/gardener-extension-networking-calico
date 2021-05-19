@@ -14,8 +14,8 @@
 
 EXTENSION_PREFIX            := gardener-extension
 NAME                        := networking-calico
-REGISTRY                    := eu.gcr.io/gardener-project
-IMAGE_PREFIX                := $(REGISTRY)/extensions
+REGISTRY                    := registry.ske.eu01.stackit.cloud/gardener-ds
+IMAGE_PREFIX                := $(REGISTRY)
 REPO_ROOT                   := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 HACK_DIR                    := $(REPO_ROOT)/hack
 VERSION                     := $(shell cat "$(REPO_ROOT)/VERSION")
@@ -53,6 +53,7 @@ docker-login:
 .PHONY: docker-images
 docker-images:
 	@docker build -t $(IMAGE_PREFIX)/$(NAME):$(VERSION) -t $(IMAGE_PREFIX)/$(NAME):latest -f Dockerfile -m 6g --target $(EXTENSION_PREFIX)-$(NAME) .
+	@docker push $(IMAGE_PREFIX)/$(NAME):$(VERSION)
 
 #####################################################################
 # Rules for verification, formatting, linting, testing and cleaning #
